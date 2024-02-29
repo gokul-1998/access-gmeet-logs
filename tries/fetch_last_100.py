@@ -2,13 +2,28 @@ import os
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-# Set up credentials
+import gspread
+from google.oauth2.service_account import Credentials
+cred_file='cobalt-vector-377412-09d0ba362f09.json'
+
+
+
+def get_gsheet_data(sheet_id):
+    # credentials = Credentials.from_service_account_file(cred_file, scopes=['https://www.googleapis.com/auth/spreadsheets'])
+
+    gc = gspread.authorize(credentials)
+    worksheet = gc.open_by_key(sheet_id).sheet1
+    all_values = worksheet.get_all_values()
+    print(f"sheet id  is , {sheet_id}")
+    for row in all_values:
+        print(row)
+
 credentials = service_account.Credentials.from_service_account_file(
-    'cobalt-vector-377412-09d0ba362f09.json',  # Update with your service account credentials file path
-    scopes=['https://www.googleapis.com/auth/drive']
+    cred_file,  
+    scopes=['https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/spreadsheets']
 )
 
-# Build the Drive service
+
 drive_service = build('drive', 'v3', credentials=credentials)
 
 def list_files_in_folder(folder_id):
@@ -22,23 +37,20 @@ def list_files_in_folder(folder_id):
         fields="files(id, name)"
     ).execute()
     files = results.get('files', [])
-    print(len(files))
     if not files:
         print('No files found in the specified folder.')
     elif len(files)==1:
-        print("laste file",files[0]['name'],files[0]['id'])
+        sheet_id=files[0]['id']
+        get_gsheet_data(sheet_id)
+
     else:
-        print('Files:')
-        
         for file in files:
-            print(file)
-            print(f"{file['name']} ({file['id']})")
             list_files_in_folder(file['id'])
-            break
+            
+            
 
 if __name__ == "__main__":
     # Provide the ID of the folder you want to access
-    folder_id = '1tMqSD61uV235vsx9c2uUIHHF0KYkqeKi'
     folder_id = '10clN-KH-3B9lg4W3ProYKKoFjtpjDF61'
 
     list_files_in_folder(folder_id)
