@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+ <table>
+    <tr>
+        <th>Page No</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Count</th>
+        <th>Action</th>
+    </tr>
+    {% for file in pages %}
+    <tr>
+        <td>{{loop.index}}</td>
+        <td>{{file.from}}</td>
+        <td>{{file.to}}</td>
+        <td>{{file.tot}}</td>
+        <!-- to add a button t -->
+        <td ><button class="btn btn-primary" onclick="fetch_data()">Fetch data</button> </td>
+        
+    </tr>
+    {% endfor %}
+ </table>
+
+
+<script>
+
+function fetch_data(){
+    alert('fetching data');
+}
+
+</script>
+</body>
+</html>
